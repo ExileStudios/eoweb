@@ -91,7 +91,6 @@ function resizeCanvases() {
 resizeCanvases();
 window.addEventListener('resize', resizeCanvases);
 
-const client = new Client();
 const ctx = canvas.getContext('2d');
 if (!ctx) {
   throw new Error('Failed to get canvas context!');
