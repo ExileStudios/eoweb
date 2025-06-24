@@ -42,12 +42,25 @@ function handleWarpRequest(client: Client, reader: EoReader) {
 function handleWarpAgree(client: Client, reader: EoReader) {
   const packet = WarpAgreeServerPacket.deserialize(reader);
   client.nearby = packet.nearby;
+  const loaded = [];
+  for (const npc of client.nearby.npcs) {
+    if (loaded.includes(npc.id)) {
+      continue;
+    }
+
+    client.preloadNpcSprites(npc.id);
+
+    loaded.push(npc.id);
+  }
+
   if (client.mapId !== client.warpMapId) {
     getEmf(client.warpMapId).then((map) => {
       client.mapId = client.warpMapId;
-      client.map = map;
-      client.emit('switchMap', undefined);
+      client.setMap(map);
+      client.movementController.freeze = false;
     });
+  } else {
+    client.movementController.freeze = false;
   }
 }
 

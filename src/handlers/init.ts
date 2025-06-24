@@ -76,6 +76,8 @@ function handleInitOk(
   data: InitInitServerPacket.ReplyCodeDataOk,
 ) {
   client.playerId = data.playerId;
+  // Hack to keep pre-game UI stable
+  client.nearby.characters[0].playerId = data.playerId;
   const bus = client.bus;
   if (!bus) {
     throw new Error('Bus is null');
@@ -184,7 +186,7 @@ function handleInitFileEmf(
   data: InitInitServerPacket.ReplyCodeDataFileEmf,
 ) {
   const reader = new EoReader(data.mapFile.content);
-  client.map = Emf.deserialize(reader);
+  client.setMap(Emf.deserialize(reader));
   saveEmf(client.mapId, client.map);
 
   if (client.downloadQueue.length > 0) {
